@@ -62,8 +62,9 @@ def visit_URL(URLs_to_visit, visited_URLs, URL_count):
 				if next_url.startswith('http://eecs.umich.edu'):
 					if html_format(next_url):
 						print (next_url)
-						if str(next_url) not in visited_URLs and str(next_url) not in URLs_to_visit:
+						if str(next_url) not in visited_URLs:
 							URLs_to_visit.put(next_url)
+							visited_URLs.add(next_url)
 
 	return URL_count
 
@@ -106,7 +107,10 @@ def main():
 	print(visited_URLs)
 
 	#Prepare and print output --------------------------------------------------------------------
-	output = 'i am the output'
+	output = ''
+	
+	for url in visited_URLs:
+		output += url + '\n'
 
 	output_filename = 'crawler.output'
 
