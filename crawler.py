@@ -68,6 +68,22 @@ def visit_URL(URLs_to_visit, visited_URLs, URL_count):
 	return URL_count
 
 
+def identify_URL_pairs(url, visited_URLs, outputURLs):
+	r = urllib.urlopen(url).read()
+	soup = BeautifulSoup(r, "html.parser")
+
+	for link in soup.find_all('a'):
+		next_url = link.get('href')
+		if next_url is not None:
+			if (next_url.startswith('/') or next_url.startswith('h')):
+				next_url = normalize_URL(next_url)
+
+				if next_url.startswith('http://eecs.umich.edu'):
+					if next_url in visited_URLs:
+						if next_url != url:
+							if next_url not in outputURLs:
+								outputURLs.append(next_url)
+								
 
 def main():
 
@@ -109,7 +125,7 @@ def main():
 	#Prepare and print output --------------------------------------------------------------------
 	output = ''
 
-	visited_URLs = visited_URLs[:2000]
+	visited_URLs = visited_URLs[:max_URLs]
 
 	for url in visited_URLs:
 		output += url + '\n'
@@ -118,6 +134,25 @@ def main():
 
 	targetFile = open(output_filename, 'w+')
 	targetFile.write(output)
+
+
+
+	# PREPARE AND PRINT URL PAIRS:
+	output_filename2 = 'URL_pairs.output'
+	output2 = ''
+
+	i = 0
+	for url in visited_URLs:
+		print (i)
+		i += 1
+		outputURLs = []
+		identify_URL_pairs(url, visited_URLs, outputURLs)
+
+		for o in outputURLs:
+			output2 += url + ' ' + o + '\n'
+
+	targetFile2 = open(output_filename2, 'w+')
+	targetFile2.write(output2)
 
 
 
