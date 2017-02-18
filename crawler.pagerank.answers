@@ -1,0 +1,9 @@
+# Kari Green
+# cngreen
+# crawler.pagerank.answers
+#----------------------------------------
+
+1. Amount of time (in seconds) your crawler needed to download the 2000 URLs:
+	51.812s
+2. Number of iterations your PageRank implementation performed to convergence:
+	idk yet

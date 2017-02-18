@@ -45,7 +45,7 @@ def html_format(input):
 
 def visit_URL(URLs_to_visit, visited_URLs, URL_count):
 	url = URLs_to_visit.get()
-	print "***visiting: ", url
+	#print "***visiting: ", url
 
 	r = urllib.urlopen(url).read()
 	soup = BeautifulSoup(r, "html.parser")
@@ -102,17 +102,16 @@ def main():
 
 	while not URLs_to_visit.empty() and URL_count < max_URLs:
 		URL_count = visit_URL(URLs_to_visit, visited_URLs, URL_count)
-		print URL_count
+		#print URL_count
 
-	print(visited_URLs)
-	print(URL_count)
+	#print visited_URLs
 
 	#Prepare and print output --------------------------------------------------------------------
 	output = ''
 
 	i = 0
 
-	print len(visited_URLs)
+	#print len(visited_URLs)
 
 	while (i < max_URLs):
 		output += visited_URLs[i] + '\n'
