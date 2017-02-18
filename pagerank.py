@@ -77,14 +77,12 @@ def main():
 			diff = old_rank[p] - page_rank[p]
 			average_diff += diff
 
-		print(average_diff)
 		average_diff = average_diff/len(URLs)
-
-		print(average_diff)
 
 		number_iterations += 1
 
-	
+	# print the number of iterations:
+	print "iterations: ", number_iterations
 	# sorts the page_rank highest to lowest
 	sorted_pr = sorted(page_rank.iteritems(), key=operator.itemgetter(1), reverse=True)
 

@@ -4,6 +4,6 @@
 #----------------------------------------
 
 1. Amount of time (in seconds) your crawler needed to download the 2000 URLs:
-	0m49.866s
-2. Number of iterations your PageRank implementation performed to convergence:
-	idk yet
+	49.866s
+2. Number of iterations your PageRank implementation performed to convergence (0.001):
+	13

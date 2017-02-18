@@ -138,21 +138,21 @@ def main():
 
 
 	# PREPARE AND PRINT URL PAIRS:
-	output_filename2 = 'URL_pairs.output'
-	output2 = ''
+	# output_filename2 = 'URL_pairs.output'
+	# output2 = ''
 
-	i = 0
-	for url in visited_URLs:
-		print (i)
-		i += 1
-		outputURLs = []
-		identify_URL_pairs(url, visited_URLs, outputURLs)
+	# i = 0
+	# for url in visited_URLs:
+	# 	print (i)
+	# 	i += 1
+	# 	outputURLs = []
+	# 	identify_URL_pairs(url, visited_URLs, outputURLs)
 
-		for o in outputURLs:
-			output2 += url + ' ' + o + '\n'
+	# 	for o in outputURLs:
+	# 		output2 += url + ' ' + o + '\n'
 
-	targetFile2 = open(output_filename2, 'w+')
-	targetFile2.write(output2)
+	# targetFile2 = open(output_filename2, 'w+')
+	# targetFile2.write(output2)
 
 
 
