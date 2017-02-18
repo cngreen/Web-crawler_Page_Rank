@@ -8,7 +8,7 @@ import re
 
 from bs4 import BeautifulSoup
 from queue import *
-from sets import *
+# from sets import *
 import urllib
 
 def normalize_URL(input):
@@ -44,11 +44,8 @@ def html_format(input):
 	return True
 
 def visit_URL(URLs_to_visit, visited_URLs, URL_count):
-	URL_count = URL_count + 1
-
 	url = URLs_to_visit.get()
 	print "***visiting: ", url
-	visited_URLs.add(str(url))
 
 	r = urllib.urlopen(url).read()
 	soup = BeautifulSoup(r, "html.parser")
@@ -61,10 +58,12 @@ def visit_URL(URLs_to_visit, visited_URLs, URL_count):
 
 				if next_url.startswith('http://eecs.umich.edu'):
 					if html_format(next_url):
-						print (next_url)
+						#print (next_url)
+
 						if str(next_url) not in visited_URLs:
+							URL_count = URL_count + 1
 							URLs_to_visit.put(next_url)
-							visited_URLs.add(next_url)
+							visited_URLs.append(next_url)
 
 	return URL_count
 
@@ -74,7 +73,7 @@ def main():
 
 	URL_count = 0
 	URL_seed = ''
-	visited_URLs = Set()
+	visited_URLs = []
 	URLs_to_visit = Queue(maxsize=0)
 	
 	try: 
@@ -95,6 +94,7 @@ def main():
 	URL_seed = normalize_URL(URL_seed)
 
 	URLs_to_visit.put(URL_seed)
+	visited_URLs.append(URL_seed)
 
 
 	# *** STEP TWO: ----------------------------------------------------------
@@ -105,12 +105,18 @@ def main():
 		print URL_count
 
 	print(visited_URLs)
+	print(URL_count)
 
 	#Prepare and print output --------------------------------------------------------------------
 	output = ''
-	
-	for url in visited_URLs:
-		output += url + '\n'
+
+	i = 0
+
+	print len(visited_URLs)
+
+	while (i < max_URLs):
+		output += visited_URLs[i] + '\n'
+		i += 1
 
 	output_filename = 'crawler.output'
 
