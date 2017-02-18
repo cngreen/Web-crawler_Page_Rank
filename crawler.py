@@ -109,18 +109,16 @@ def main():
 	#Prepare and print output --------------------------------------------------------------------
 	output = ''
 
-	i = 0
+	visited_URLs = visited_URLs[:2000]
 
-	#print len(visited_URLs)
-
-	while (i < max_URLs):
-		output += visited_URLs[i] + '\n'
-		i += 1
+	for url in visited_URLs:
+		output += url + '\n'
 
 	output_filename = 'crawler.output'
 
 	targetFile = open(output_filename, 'w+')
 	targetFile.write(output)
+
 
 
 
