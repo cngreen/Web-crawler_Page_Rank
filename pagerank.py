@@ -5,6 +5,8 @@
 import sys
 import os
 import re
+import operator
+import math
 
 from bs4 import BeautifulSoup
 from queue import *
@@ -17,16 +19,12 @@ def update_page_rank(url, URLs, link_pairs, page_rank):
 	new_rank = (1 - d)/len(URLs)
 
 	for link in link_pairs[url]:
-		# print (link)
-		# print page_rank[link] # page rank
-		# print URLs[link] # out links
-
-		if (URLs[link][0] > 0):
-			new_rank += page_rank[link]/URLs[link][0]
+		if (URLs[link][0] > 0): #outlinks
+			new_rank += d * (page_rank[link]/URLs[link][0])
 
 	page_rank[url] = new_rank
 
-	print "new_rank", new_rank
+	#print "new_rank", new_rank
 
 
 def main():
@@ -54,7 +52,7 @@ def main():
 
 	#print (URLs)
 
-	path2 = os.path.join(os.getcwd(), 'test_URL_pairs.output')
+	path2 = os.path.join(os.getcwd(), 'URL_pairs.output')
 	for line in open(path2):
 		line = line.rstrip('\n')
 		a = line.split(' ')
@@ -70,9 +68,9 @@ def main():
 	# print(link_pairs['http://eecs.umich.edu'])
 	# print(URLs['http://eecs.umich.edu'])
 
-	average_diff = 10
+	average_diff = 1000000000
 	number_iterations = 0
-	while average_diff > 0.0001:
+	while math.fabs(average_diff) > convergence:
 		
 		old_rank = page_rank.copy()
 
@@ -87,6 +85,7 @@ def main():
 			diff = old_rank[p] - page_rank[p]
 			average_diff += diff
 
+		print(average_diff)
 		average_diff = average_diff/len(URLs)
 
 		print(average_diff)
@@ -95,10 +94,18 @@ def main():
 
 	
 
-	for p in page_rank.keys():
-		print p, page_rank[p]
+	sorted_pr = sorted(page_rank.iteritems(), key=operator.itemgetter(1), reverse=True)
+
+	for p in sorted_pr:
+		print p
 
 	print "iters", number_iterations
+
+	i = 0
+	while i < 10:
+		print sorted_pr[i]
+		i += 1
+
 
 
 
@@ -108,7 +115,10 @@ def main():
 
 
 	#Prepare and print output --------------------------------------------------------------------
-	output = 'i am the output'
+	output = ''
+
+	for s in sorted_pr:
+		output += s[0] + ' ' + str(s[1]) + '\n'
 
 	output_filename = 'pagerank.output'
 
