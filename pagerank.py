@@ -47,26 +47,18 @@ def main():
 	lines = [line.rstrip('\n') for line in open(path)]
 	for line in lines:
 		URLs[line] = [0, 0] # [number of out links, number of in links]
-		page_rank[line] = 0.25 #initial page rank value, from spec
-		link_pairs[line] = []
-
-	#print (URLs)
+		page_rank[line] = 0.25 # initial page rank value, from spec
+		link_pairs[line] = [] # will contain a list of all pages that link to this page
 
 	path2 = os.path.join(os.getcwd(), 'URL_pairs.output')
 	for line in open(path2):
 		line = line.rstrip('\n')
 		a = line.split(' ')
 
-		link_pairs[a[0]].append(a[1])
+		link_pairs[a[1]].append(a[0])
 
 		URLs[a[0]][0] += 1 #out links, source page
 		URLs[a[1]][1] += 1 #in links, linked to
-	
-	#print(lines)
-
-	# print (URLs) 
-	# print(link_pairs['http://eecs.umich.edu'])
-	# print(URLs['http://eecs.umich.edu'])
 
 	average_diff = 1000000000
 	number_iterations = 0
@@ -93,25 +85,8 @@ def main():
 		number_iterations += 1
 
 	
-
+	# sorts the page_rank highest to lowest
 	sorted_pr = sorted(page_rank.iteritems(), key=operator.itemgetter(1), reverse=True)
-
-	for p in sorted_pr:
-		print p
-
-	print "iters", number_iterations
-
-	i = 0
-	while i < 10:
-		print sorted_pr[i]
-		i += 1
-
-
-
-
-	# update_page_rank('http://eecs.umich.edu', URLs, link_pairs, page_rank)
-	# update_page_rank('http://eecs.umich.edu', URLs, link_pairs, page_rank)
-	# update_page_rank('http://eecs.umich.edu', URLs, link_pairs, page_rank)
 
 
 	#Prepare and print output --------------------------------------------------------------------
