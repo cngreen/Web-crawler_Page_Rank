@@ -56,7 +56,7 @@ def visit_URL(URLs_to_visit, visited_URLs, URL_count):
 			if (next_url.startswith('/') or next_url.startswith('h')):
 				next_url = normalize_URL(next_url)
 
-				if next_url.startswith('http://eecs.umich.edu'):
+				if "eecs.umich.edu" in next_url:
 					if html_format(next_url):
 						#print (next_url)
 
@@ -83,7 +83,7 @@ def identify_URL_pairs(url, visited_URLs, outputURLs):
 						if next_url != url:
 							if next_url not in outputURLs:
 								outputURLs.append(next_url)
-								
+
 
 def main():
 
