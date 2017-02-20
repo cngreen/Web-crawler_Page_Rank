@@ -52,28 +52,30 @@ def html_format(input):
 
 	return True # has no extension, normal link
 
-def visit_URL(URLs_to_visit, visited_URLs, URL_count):
+def visit_URL(URLs_to_visit, visited_URLs, URL_count, max_URLs):
 	url = URLs_to_visit.pop(0) # first URL in queue
 
 	#print "***visiting: ", url #used to see which URL is being crawled in testing
-
 	URL_count += 1 # a URL has been visited
 	visited_URLs.append(url)
 
-	r = urllib.urlopen(url).read()
-	soup = BeautifulSoup(r, "html.parser")
+	if (len(URLs_to_visit)) < max_URLs: 
+	# the queue is too short, need to find more URLs to search
 
-	for link in soup.find_all('a'):
-		next_url = link.get('href')
-		if next_url is not None:
-			if next_url.startswith('/') or "eecs.umich.edu" in next_url:
-				# either a relative path or in the eecs.umich.edu domain
-				next_url = normalize_URL(next_url, url)
-				
-				if html_format(next_url):
-					if str(next_url) not in visited_URLs:
-						if str(next_url) not in URLs_to_visit:
-							URLs_to_visit.append(next_url) # add URL to queue
+		r = urllib.urlopen(url).read()
+		soup = BeautifulSoup(r, "html.parser")
+
+		for link in soup.find_all('a'):
+			next_url = link.get('href')
+			if next_url is not None:
+				if next_url.startswith('/') or "eecs.umich.edu" in next_url:
+					# either a relative path or in the eecs.umich.edu domain
+					next_url = normalize_URL(next_url, url)
+					
+					if html_format(next_url):
+						if str(next_url) not in visited_URLs:
+							if str(next_url) not in URLs_to_visit:
+								URLs_to_visit.append(next_url) # add URL to queue
 
 	return URL_count
 
@@ -85,14 +87,14 @@ def identify_URL_pairs(url, visited_URLs, outputURLs):
 	for link in soup.find_all('a'):
 		next_url = link.get('href')
 		if next_url is not None:
-			if (next_url.startswith('/') or next_url.startswith('h')):
+			if next_url.startswith('/') or "eecs.umich.edu" in next_url:
+				# either a relative path or in the eecs.umich.edu domain
 				next_url = normalize_URL(next_url, url)
 
-				if "eecs.umich.edu" in next_url:
-					if next_url in visited_URLs:
-						if next_url != url:
-							if next_url not in outputURLs:
-								outputURLs.append(next_url)
+				if next_url in visited_URLs:
+					if next_url != url:
+						if next_url not in outputURLs:
+							outputURLs.append(next_url)
 
 
 def main():
@@ -128,7 +130,7 @@ def main():
 
 	while len(URLs_to_visit) > 0 and URL_count < max_URLs: 
 	# while there are URLs to visit and we haven't visited the max number of URLs
-		URL_count = visit_URL(URLs_to_visit, visited_URLs, URL_count) # visit the URL
+		URL_count = visit_URL(URLs_to_visit, visited_URLs, URL_count, max_URLs) # visit the URL
 		print URL_count # used to keep track of progress of the running program
 
 	#print visited_URLs
