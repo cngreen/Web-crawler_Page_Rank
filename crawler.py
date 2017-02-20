@@ -13,8 +13,10 @@ import urllib
 import urlparse
 
 def normalize_URL(input, url):
-	if input.startswith('/'): # relative path
-		input = urlparse.urljoin(url, input) # join it with the url we are currently searching
+	# normalizes the URL
+
+	if input.startswith('/'): # relative path, joins to url of currently crawled page
+		input = urlparse.urljoin(url, input)
 		if input.endswith('/'):
 			input = input[:-1]
 		input.lower()
@@ -22,26 +24,27 @@ def normalize_URL(input, url):
 
 	input = re.sub(r'http://', '', input)
 	input = re.sub(r'https://', '', input)
-	input = re.sub(r'www.', '', input)
+	input = re.sub(r'www.', '', input) # removes www.
 
-	if input.endswith('/'):
+	if input.endswith('/'): # removes ending /
 		input = input[:-1]
 
-	input = "http://" + input
+	input = "http://" + input # http:// and https:// => http://
 
 	input.lower()
-
-	if '#' in input:
+ 
+	if '#' in input: # removes # parameters
 		x = input.split('#')
 		input = x[0]
 
 	return input
 
 def html_format(input):
+	# tests if the link is .html format
 	input = re.sub(r'http://eecs.umich.edu', '', input)
 	find = input.split('.')
 
-	if find is not None and len(find) >= 2:
+	if find is not None and len(find) >= 2: 
 		test = find[1]
 
 		if len(test) > 3:
@@ -59,7 +62,9 @@ def visit_URL(URLs_to_visit, visited_URLs, URL_count, max_URLs):
 	URL_count += 1 # a URL has been visited
 	visited_URLs.append(url)
 
-	if (len(URLs_to_visit)) < max_URLs: 
+	print "to visit: ", len(URLs_to_visit), " visited: ", len(visited_URLs)
+
+	if (len(URLs_to_visit) + len(visited_URLs)) < max_URLs: 
 	# the queue is too short, need to find more URLs to search
 
 		r = urllib.urlopen(url).read()
@@ -91,9 +96,10 @@ def identify_URL_pairs(url, visited_URLs, outputURLs):
 				# either a relative path or in the eecs.umich.edu domain
 				next_url = normalize_URL(next_url, url)
 
-				if next_url in visited_URLs:
-					if next_url != url:
-						if next_url not in outputURLs:
+				if next_url in visited_URLs: 
+				# only want to create mappings between URLs that are in the 2000
+					if next_url != url: # no self links
+						if next_url not in outputURLs: # no multiple links
 							outputURLs.append(next_url)
 
 
@@ -150,22 +156,25 @@ def main():
 
 
 
-	# PREPARE AND PRINT URL PAIRS:
-	output_filename2 = 'URL_pairs.output'
-	output2 = ''
+	# # PREPARE AND PRINT URL PAIRS:
+	# output_filename2 = 'URL_pairs.output'
+	# # this is a file that contains URL source and URL pairs
+	# # the file is formatted such that each line has a pair, separated by a space
+	# # [URL source] [URL]
+	# output2 = ''
 
-	i = 0
-	for url in visited_URLs:
-		print (i)
-		i += 1
-		outputURLs = []
-		identify_URL_pairs(url, visited_URLs, outputURLs)
+	# i = 0
+	# for url in visited_URLs:
+	# 	print (i)
+	# 	i += 1
+	# 	outputURLs = []
+	# 	identify_URL_pairs(url, visited_URLs, outputURLs) 
 
-		for o in outputURLs:
-			output2 += url + ' ' + o + '\n'
+	# 	for o in outputURLs: # contains the URLs that a page links to
+	# 		output2 += url + ' ' + o + '\n'
 
-	targetFile2 = open(output_filename2, 'w+')
-	targetFile2.write(output2)
+	# targetFile2 = open(output_filename2, 'w+')
+	# targetFile2.write(output2)
 
 
 
