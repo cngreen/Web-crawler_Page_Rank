@@ -48,8 +48,10 @@ def html_format(input):
 	return True # has no extension, normal link
 
 def visit_URL(URLs_to_visit, visited_URLs, URL_count):
-	url = URLs_to_visit.get()
+	url = URLs_to_visit.pop(0) # first URL in queue
 	print "***visiting: ", url
+	URL_count += 1
+	visited_URLs.append(url)
 
 	r = urllib.urlopen(url).read()
 	soup = BeautifulSoup(r, "html.parser")
@@ -62,12 +64,11 @@ def visit_URL(URLs_to_visit, visited_URLs, URL_count):
 
 				if "eecs.umich.edu" in next_url:
 					if html_format(next_url):
-						#print (next_url)
 
-						if str(next_url) not in visited_URLs:
-							URL_count = URL_count + 1
-							URLs_to_visit.put(next_url)
-							visited_URLs.append(next_url)
+						if str(next_url) != url:
+							if str(next_url) not in visited_URLs:
+								if str(next_url) not in URLs_to_visit:
+									URLs_to_visit.append(next_url) # add URL to queue
 
 	return URL_count
 
@@ -94,7 +95,7 @@ def main():
 	URL_count = 0
 	URL_seed = ''
 	visited_URLs = []
-	URLs_to_visit = Queue(maxsize=0)
+	URLs_to_visit = []
 	
 	try: 
 		seed_URL_file = str(sys.argv[1])
@@ -113,14 +114,16 @@ def main():
 
 	URL_seed = normalize_URL(URL_seed)
 
-	URLs_to_visit.put(URL_seed)
-	visited_URLs.append(URL_seed)
+	# add the seed to the queue of URLs to visit
+	URLs_to_visit.append(URL_seed)
 
 
 	# *** STEP TWO: ----------------------------------------------------------
 	# start with http://www.eecs.umich.edu (from URL_seed)
+	print "hey"
+	print(URLs_to_visit)
 
-	while not URLs_to_visit.empty() and URL_count < max_URLs:
+	while len(URLs_to_visit) > 0 and URL_count < max_URLs:
 		URL_count = visit_URL(URLs_to_visit, visited_URLs, URL_count)
 		print URL_count # to keep track of progress
 
