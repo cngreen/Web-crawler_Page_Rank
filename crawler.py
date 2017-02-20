@@ -43,13 +43,13 @@ def html_format(input):
 			if test[:4] == 'html':
 				return True
 
-		return False
+		return False # has an extension, is not html
 
-	return True
+	return True # has no extension, normal link
 
 def visit_URL(URLs_to_visit, visited_URLs, URL_count):
 	url = URLs_to_visit.get()
-	#print "***visiting: ", url
+	print "***visiting: ", url
 
 	r = urllib.urlopen(url).read()
 	soup = BeautifulSoup(r, "html.parser")
@@ -122,7 +122,7 @@ def main():
 
 	while not URLs_to_visit.empty() and URL_count < max_URLs:
 		URL_count = visit_URL(URLs_to_visit, visited_URLs, URL_count)
-		#print URL_count
+		print URL_count # to keep track of progress
 
 	#print visited_URLs
 
