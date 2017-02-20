@@ -24,6 +24,10 @@ def normalize_URL(input):
 
 	input = "http://" + input
 
+	if '#' in input:
+		x = input.split('#')
+		input = x[0]
+
 	input.lower()
 
 	return input
