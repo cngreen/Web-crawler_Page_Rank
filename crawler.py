@@ -58,7 +58,7 @@ def html_format(input):
 def visit_URL(URLs_to_visit, visited_URLs, URL_count, max_URLs):
 	url = URLs_to_visit.popleft() # first URL in queue
 
-	#print "***visiting: ", url #used to see which URL is being crawled in testing
+	print "***visiting: ", url #used to see which URL is being crawled in testing
 	URL_count += 1 # a URL has been visited
 	visited_URLs.append(url)
 

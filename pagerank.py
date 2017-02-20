@@ -14,6 +14,7 @@ from queue import *
 import urllib
 
 def update_page_rank(url, URLs, link_pairs, page_rank):
+	# (1-d)/N + sum(1/out_links(page) * rank(page))
 	d = 0.85
 
 	new_rank = (1 - d)/len(URLs)
@@ -78,7 +79,7 @@ def main():
 
 	max_diff = 1000000000
 	number_iterations = 0
-	
+
 	while max_diff > convergence:
 		
 		old_rank = page_rank.copy()
