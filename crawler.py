@@ -10,25 +10,30 @@ from bs4 import BeautifulSoup
 from queue import *
 # from sets import *
 import urllib
+import urlparse
 
-def normalize_URL(input):
+def normalize_URL(input, url):
+	if input.startswith('/'): # relative path
+		input = urlparse.urljoin(url, input) # join it with the url we are currently searching
+		if input.endswith('/'):
+			input = input[:-1]
+		input.lower()
+		return input
+
 	input = re.sub(r'http://', '', input)
 	input = re.sub(r'https://', '', input)
 	input = re.sub(r'www.', '', input)
-
-	if input.startswith('/'):
-		input = "eecs.umich.edu" + input
 
 	if input.endswith('/'):
 		input = input[:-1]
 
 	input = "http://" + input
 
+	input.lower()
+
 	if '#' in input:
 		x = input.split('#')
 		input = x[0]
-
-	input.lower()
 
 	return input
 
@@ -49,8 +54,10 @@ def html_format(input):
 
 def visit_URL(URLs_to_visit, visited_URLs, URL_count):
 	url = URLs_to_visit.pop(0) # first URL in queue
-	print "***visiting: ", url
-	URL_count += 1
+
+	#print "***visiting: ", url #used to see which URL is being crawled in testing
+
+	URL_count += 1 # a URL has been visited
 	visited_URLs.append(url)
 
 	r = urllib.urlopen(url).read()
@@ -59,16 +66,14 @@ def visit_URL(URLs_to_visit, visited_URLs, URL_count):
 	for link in soup.find_all('a'):
 		next_url = link.get('href')
 		if next_url is not None:
-			if (next_url.startswith('/') or next_url.startswith('h')):
-				next_url = normalize_URL(next_url)
-
-				if "eecs.umich.edu" in next_url:
-					if html_format(next_url):
-
-						if str(next_url) != url:
-							if str(next_url) not in visited_URLs:
-								if str(next_url) not in URLs_to_visit:
-									URLs_to_visit.append(next_url) # add URL to queue
+			if next_url.startswith('/') or "eecs.umich.edu" in next_url:
+				# either a relative path or in the eecs.umich.edu domain
+				next_url = normalize_URL(next_url, url)
+				
+				if html_format(next_url):
+					if str(next_url) not in visited_URLs:
+						if str(next_url) not in URLs_to_visit:
+							URLs_to_visit.append(next_url) # add URL to queue
 
 	return URL_count
 
@@ -81,9 +86,9 @@ def identify_URL_pairs(url, visited_URLs, outputURLs):
 		next_url = link.get('href')
 		if next_url is not None:
 			if (next_url.startswith('/') or next_url.startswith('h')):
-				next_url = normalize_URL(next_url)
+				next_url = normalize_URL(next_url, url)
 
-				if next_url.startswith('http://eecs.umich.edu'):
+				if "eecs.umich.edu" in next_url:
 					if next_url in visited_URLs:
 						if next_url != url:
 							if next_url not in outputURLs:
@@ -112,7 +117,7 @@ def main():
 	for line in open(path):
 		URL_seed = str(line)
 
-	URL_seed = normalize_URL(URL_seed)
+	URL_seed = normalize_URL(URL_seed, '')
 
 	# add the seed to the queue of URLs to visit
 	URLs_to_visit.append(URL_seed)
@@ -120,12 +125,11 @@ def main():
 
 	# *** STEP TWO: ----------------------------------------------------------
 	# start with http://www.eecs.umich.edu (from URL_seed)
-	print "hey"
-	print(URLs_to_visit)
 
-	while len(URLs_to_visit) > 0 and URL_count < max_URLs:
-		URL_count = visit_URL(URLs_to_visit, visited_URLs, URL_count)
-		print URL_count # to keep track of progress
+	while len(URLs_to_visit) > 0 and URL_count < max_URLs: 
+	# while there are URLs to visit and we haven't visited the max number of URLs
+		URL_count = visit_URL(URLs_to_visit, visited_URLs, URL_count) # visit the URL
+		print URL_count # used to keep track of progress of the running program
 
 	#print visited_URLs
 
@@ -145,21 +149,21 @@ def main():
 
 
 	# PREPARE AND PRINT URL PAIRS:
-	# output_filename2 = 'URL_pairs.output'
-	# output2 = ''
+	output_filename2 = 'URL_pairs.output'
+	output2 = ''
 
-	# i = 0
-	# for url in visited_URLs:
-	# 	print (i)
-	# 	i += 1
-	# 	outputURLs = []
-	# 	identify_URL_pairs(url, visited_URLs, outputURLs)
+	i = 0
+	for url in visited_URLs:
+		print (i)
+		i += 1
+		outputURLs = []
+		identify_URL_pairs(url, visited_URLs, outputURLs)
 
-	# 	for o in outputURLs:
-	# 		output2 += url + ' ' + o + '\n'
+		for o in outputURLs:
+			output2 += url + ' ' + o + '\n'
 
-	# targetFile2 = open(output_filename2, 'w+')
-	# targetFile2.write(output2)
+	targetFile2 = open(output_filename2, 'w+')
+	targetFile2.write(output2)
 
 
 

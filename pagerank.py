@@ -26,6 +26,22 @@ def update_page_rank(url, URLs, link_pairs, page_rank):
 
 	#print "new_rank", new_rank
 
+def find_max_difference(old_rank, page_rank):
+	# finds the maximum absolute difference of page_ranks from the two iterations
+	# from piazza post https://piazza.com/class/ixja7lvhrv57eo?cid=315
+	# "for convergence, you can just use the max of the absolute differences between two iterations. 
+	# If the max falls below 0.001, you're done."
+
+	max_diff = -1
+
+	for p in page_rank.keys():
+		diff = math.fabs(old_rank[p] - page_rank[p])
+		if diff > max_diff:
+			max_diff = diff
+
+	return max_diff
+
+
 
 def main():
 
@@ -60,9 +76,10 @@ def main():
 		URLs[a[0]][0] += 1 #out links, source page
 		URLs[a[1]][1] += 1 #in links, linked to
 
-	average_diff = 1000000000
+	max_diff = 1000000000
 	number_iterations = 0
-	while math.fabs(average_diff) > convergence:
+	
+	while max_diff > convergence:
 		
 		old_rank = page_rank.copy()
 
@@ -71,13 +88,7 @@ def main():
 
 		#print(page_rank)
 
-		average_diff = 0.0
-
-		for p in page_rank.keys():
-			diff = old_rank[p] - page_rank[p]
-			average_diff += diff
-
-		average_diff = average_diff/len(URLs)
+		max_diff = find_max_difference(old_rank, page_rank)
 
 		number_iterations += 1
 
