@@ -21,7 +21,7 @@ def normalize_URL(input, url):
 		input = urlparse.urljoin(url, input)
 		if input.endswith('/'):
 			input = input[:-1]
-		input.lower()
+		input = input.lower()
 		return input
 
 	input = re.sub(r'http://', '', input)
@@ -33,7 +33,7 @@ def normalize_URL(input, url):
 
 	input = "http://" + input # http:// and https:// => http://
 
-	input.lower()
+	input = input.lower()
  
 	if '#' in input: # removes # parameters
 		x = input.split('#')
@@ -81,10 +81,15 @@ def main():
 
 	visited_URLs = []
 
+	try: 
+		crawler_output_file = str(sys.argv[1])
+	except:
+		sys.exit("ERROR: input format not correct, expecting: \n [crawler_output_file]")
+
 
 	# *** STEP ONE: ----------------------------------------------------------
 	# open the file containing the URLs
-	path = os.path.join(os.getcwd(), 'crawler.output')
+	path = os.path.join(os.getcwd(), crawler_output_file)
 
 	for line in open(path):
 		line = line.rstrip('\n')

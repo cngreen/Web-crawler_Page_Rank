@@ -53,8 +53,9 @@ def main():
 	try: 
 		URL_file = str(sys.argv[1])
 		convergence = float(sys.argv[2])
+		URL_pair_file = str(sys.argv[3])
 	except:
-		sys.exit("ERROR: input format not correct, expecting: \n [URL_file] [convergence threshold]")
+		sys.exit("ERROR: input format not correct, expecting: \n [URL_file] [convergence threshold] [URL_pairs_file]")
 
 
 	# *** STEP ONE: ----------------------------------------------------------
