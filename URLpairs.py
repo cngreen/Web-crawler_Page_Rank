@@ -7,8 +7,10 @@ import os
 import re
 
 from bs4 import BeautifulSoup
-from queue import *
-# from sets import *
+
+from sets import Set
+
+
 import urllib
 import urlparse
 
@@ -57,6 +59,7 @@ def html_format(input):
 
 
 def identify_URL_pairs(url, visited_URLs, outputURLs):
+	print (url)
 	r = urllib.urlopen(url).read()
 	soup = BeautifulSoup(r, "html.parser")
 
@@ -65,17 +68,13 @@ def identify_URL_pairs(url, visited_URLs, outputURLs):
 		if next_url is not None:
 			if next_url.startswith('/') or "eecs.umich.edu" in next_url:
 				# either a relative path or in the eecs.umich.edu domain
-				#print next_url
 				next_url = normalize_URL(next_url, url)
 
-				print next_url
-
 				if next_url in visited_URLs: 
-					print "hi"
 				# only want to create mappings between URLs that are in the 2000
 					if next_url != url: # no self links
 						if next_url not in outputURLs: # no multiple links
-							outputURLs.append(next_url)
+							outputURLs.add(next_url)
 
 
 def main():
@@ -101,9 +100,9 @@ def main():
 
 	i = 0
 	for url in visited_URLs:
-		print (i)
+		print (i) # used to visualize progress
 		i += 1
-		outputURLs = []
+		outputURLs = Set()
 		identify_URL_pairs(url, visited_URLs, outputURLs) 
 
 		for o in outputURLs: # contains the URLs that a page links to

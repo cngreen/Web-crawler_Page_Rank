@@ -7,8 +7,8 @@ import os
 import re
 
 from bs4 import BeautifulSoup
-from queue import *
-# from sets import *
+from collections import deque
+
 import urllib
 import urlparse
 
@@ -56,7 +56,7 @@ def html_format(input):
 	return True # has no extension, normal link
 
 def visit_URL(URLs_to_visit, visited_URLs, URL_count, max_URLs):
-	url = URLs_to_visit.pop(0) # first URL in queue
+	url = URLs_to_visit.popleft() # first URL in queue
 
 	#print "***visiting: ", url #used to see which URL is being crawled in testing
 	URL_count += 1 # a URL has been visited
@@ -108,7 +108,7 @@ def main():
 	URL_count = 0
 	URL_seed = ''
 	visited_URLs = []
-	URLs_to_visit = []
+	URLs_to_visit = deque()
 	
 	try: 
 		seed_URL_file = str(sys.argv[1])
