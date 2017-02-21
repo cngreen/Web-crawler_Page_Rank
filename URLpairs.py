@@ -65,7 +65,9 @@ def html_format(input):
 
 def identify_URL_pairs(url, visited_URLs, outputURLs):
 	print (url)
-	r = urllib2.urlopen(url) 
+	try: r = urllib2.urlopen(url) 
+	except: return URL_count
+	
 	if (r.code == 200): # if successful, crawl it
 
 		r = r.read()

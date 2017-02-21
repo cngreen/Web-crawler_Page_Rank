@@ -58,10 +58,12 @@ def html_format(input):
 def visit_URL(URLs_to_visit, visited_URLs, URL_count, max_URLs):
 	url = URLs_to_visit.popleft() # first URL in queue
 
-	print "***visiting: ", url #used to see which URL is being crawled in testing
+	#print "***visiting: ", url #used to see which URL is being crawled in testing
 
 	# attempt to visit the url
-	r = urllib2.urlopen(url) 
+	try: r = urllib2.urlopen(url) 
+	except: return URL_count # if unsuccessful, don't crawl, don't crawl pages that result in 404
+
 	if (r.code == 200): # if successful, crawl it
 
 		r = r.read()
@@ -69,7 +71,7 @@ def visit_URL(URLs_to_visit, visited_URLs, URL_count, max_URLs):
 		URL_count += 1 # a URL has been visited
 		visited_URLs.append(url)
 
-		print "to visit: ", len(URLs_to_visit), " visited: ", len(visited_URLs)
+		#print "to visit: ", len(URLs_to_visit), " visited: ", len(visited_URLs)
 
 		if (len(URLs_to_visit) + len(visited_URLs)) < max_URLs: 
 		# the queue is too short, need to find more URLs to search
