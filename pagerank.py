@@ -25,7 +25,6 @@ def update_page_rank(url, URLs, link_pairs, page_rank):
 
 	page_rank[url] = new_rank
 
-	#print "new_rank", new_rank
 
 def find_max_difference(old_rank, page_rank):
 	# finds the maximum absolute difference of page_ranks from the two iterations
@@ -68,7 +67,7 @@ def main():
 		page_rank[line] = 0.25 # initial page rank value, from spec
 		link_pairs[line] = [] # will contain a list of all pages that link to this page
 
-	path2 = os.path.join(os.getcwd(), 'URL_pairs.output')
+	path2 = os.path.join(os.getcwd(), URL_pair_file)
 	for line in open(path2):
 		line = line.rstrip('\n')
 		a = line.split(' ')
@@ -81,14 +80,12 @@ def main():
 	max_diff = 1000000000
 	number_iterations = 0
 
-	while max_diff > convergence:
+	while max_diff > convergence: # while it hasn't converged
 		
 		old_rank = page_rank.copy()
 
 		for url in URLs.keys():
 			update_page_rank(url, URLs, link_pairs, page_rank)
-
-		#print(page_rank)
 
 		max_diff = find_max_difference(old_rank, page_rank)
 

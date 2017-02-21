@@ -16,7 +16,7 @@ from bs4 import BeautifulSoup
 from sets import Set
 
 
-import urllib
+import urllib2
 import urlparse
 
 def normalize_URL(input, url):
@@ -64,10 +64,9 @@ def html_format(input):
 
 
 def identify_URL_pairs(url, visited_URLs, outputURLs):
-	print (url)
-	try: r = urllib2.urlopen(url) 
-	except: return URL_count
-	
+	# print (url) used to see which URL is visited in testing
+	r = urllib2.urlopen(url) 
+
 	if (r.code == 200): # if successful, crawl it
 
 		r = r.read()
