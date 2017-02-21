@@ -1,7 +1,12 @@
 # Kari Green
 # cngreen
-# crawler.py
+# URLpairs.py
 #----------------------------------------
+
+# This file is used to generate an output file called URL_pairs.output
+# This output file creates a map of the links within the 2000 links collected in crawler.py
+
+
 import sys
 import os
 import re
@@ -60,21 +65,24 @@ def html_format(input):
 
 def identify_URL_pairs(url, visited_URLs, outputURLs):
 	print (url)
-	r = urllib.urlopen(url).read()
-	soup = BeautifulSoup(r, "html.parser")
+	r = urllib2.urlopen(url) 
+	if (r.code == 200): # if successful, crawl it
 
-	for link in soup.find_all('a'):
-		next_url = link.get('href')
-		if next_url is not None:
-			if next_url.startswith('/') or "eecs.umich.edu" in next_url:
-				# either a relative path or in the eecs.umich.edu domain
-				next_url = normalize_URL(next_url, url)
+		r = r.read()
+		soup = BeautifulSoup(r, "html.parser")
 
-				if next_url in visited_URLs: 
-				# only want to create mappings between URLs that are in the 2000
-					if next_url != url: # no self links
-						if next_url not in outputURLs: # no multiple links
-							outputURLs.add(next_url)
+		for link in soup.find_all('a'):
+			next_url = link.get('href')
+			if next_url is not None:
+				if next_url.startswith('/') or "eecs.umich.edu" in next_url:
+					# either a relative path or in the eecs.umich.edu domain
+					next_url = normalize_URL(next_url, url)
+
+					if next_url in visited_URLs: 
+					# only want to create mappings between URLs that are in the 2000
+						if next_url != url: # no self links
+							if next_url not in outputURLs: # no multiple links
+								outputURLs.add(next_url)
 
 
 def main():

@@ -9,7 +9,7 @@ import re
 from bs4 import BeautifulSoup
 from collections import deque
 
-import urllib
+import urllib2
 import urlparse
 
 def normalize_URL(input, url):
@@ -59,49 +59,38 @@ def visit_URL(URLs_to_visit, visited_URLs, URL_count, max_URLs):
 	url = URLs_to_visit.popleft() # first URL in queue
 
 	print "***visiting: ", url #used to see which URL is being crawled in testing
-	URL_count += 1 # a URL has been visited
-	visited_URLs.append(url)
 
-	print "to visit: ", len(URLs_to_visit), " visited: ", len(visited_URLs)
+	# attempt to visit the url
+	r = urllib2.urlopen(url) 
+	if (r.code == 200): # if successful, crawl it
 
-	if (len(URLs_to_visit) + len(visited_URLs)) < max_URLs: 
-	# the queue is too short, need to find more URLs to search
+		r = r.read()
 
-		r = urllib.urlopen(url).read()
-		soup = BeautifulSoup(r, "html.parser")
+		URL_count += 1 # a URL has been visited
+		visited_URLs.append(url)
 
-		for link in soup.find_all('a'):
-			next_url = link.get('href')
-			if next_url is not None:
-				if next_url.startswith('/') or "eecs.umich.edu" in next_url:
-					# either a relative path or in the eecs.umich.edu domain
-					next_url = normalize_URL(next_url, url)
-					
-					if html_format(next_url):
-						if str(next_url) not in visited_URLs:
-							if str(next_url) not in URLs_to_visit:
-								URLs_to_visit.append(next_url) # add URL to queue
+		print "to visit: ", len(URLs_to_visit), " visited: ", len(visited_URLs)
+
+		if (len(URLs_to_visit) + len(visited_URLs)) < max_URLs: 
+		# the queue is too short, need to find more URLs to search
+
+			#r = urllib2.urlopen(url).read()
+			soup = BeautifulSoup(r, "html.parser")
+
+			for link in soup.find_all('a'):
+				next_url = link.get('href')
+				if next_url is not None:
+					if next_url.startswith('/') or "eecs.umich.edu" in next_url:
+						# either a relative path or in the eecs.umich.edu domain
+						next_url = normalize_URL(next_url, url)
+						
+						if html_format(next_url):
+							if str(next_url) not in visited_URLs:
+								if str(next_url) not in URLs_to_visit:
+									URLs_to_visit.append(next_url) # add URL to queue
+
 
 	return URL_count
-
-
-def identify_URL_pairs(url, visited_URLs, outputURLs):
-	r = urllib.urlopen(url).read()
-	soup = BeautifulSoup(r, "html.parser")
-
-	for link in soup.find_all('a'):
-		next_url = link.get('href')
-		if next_url is not None:
-			if next_url.startswith('/') or "eecs.umich.edu" in next_url:
-				# either a relative path or in the eecs.umich.edu domain
-				next_url = normalize_URL(next_url, url)
-
-				if next_url in visited_URLs: 
-				# only want to create mappings between URLs that are in the 2000
-					if next_url != url: # no self links
-						if next_url not in outputURLs: # no multiple links
-							outputURLs.append(next_url)
-
 
 def main():
 
@@ -141,7 +130,8 @@ def main():
 
 	#print visited_URLs
 
-	#Prepare and print output --------------------------------------------------------------------
+	# *** STEP THREE: ----------------------------------------------------------
+	#Prepare and print output
 	output = ''
 
 	visited_URLs = visited_URLs[:max_URLs]
@@ -153,28 +143,6 @@ def main():
 
 	targetFile = open(output_filename, 'w+')
 	targetFile.write(output)
-
-
-
-	# # PREPARE AND PRINT URL PAIRS:
-	# output_filename2 = 'URL_pairs.output'
-	# # this is a file that contains URL source and URL pairs
-	# # the file is formatted such that each line has a pair, separated by a space
-	# # [URL source] [URL]
-	# output2 = ''
-
-	# i = 0
-	# for url in visited_URLs:
-	# 	print (i)
-	# 	i += 1
-	# 	outputURLs = []
-	# 	identify_URL_pairs(url, visited_URLs, outputURLs) 
-
-	# 	for o in outputURLs: # contains the URLs that a page links to
-	# 		output2 += url + ' ' + o + '\n'
-
-	# targetFile2 = open(output_filename2, 'w+')
-	# targetFile2.write(output2)
 
 
 
