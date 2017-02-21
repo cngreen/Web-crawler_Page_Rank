@@ -17,8 +17,10 @@ def normalize_URL(input, url):
 
 	if input.startswith('/'): # relative path, joins to url of currently crawled page
 		input = urlparse.urljoin(url, input)
-		if input.endswith('/'):
+		
+		if input.endswith('/'): # removes ending /
 			input = input[:-1]
+		
 		input = input.lower()
 		return input
 
@@ -62,7 +64,7 @@ def visit_URL(URLs_to_visit, visited_URLs, URL_count, max_URLs):
 
 	# attempt to visit the url
 	try: r = urllib2.urlopen(url) 
-	except: return URL_count # if unsuccessful, don't crawl, don't crawl pages that result in 404
+	except: return URL_count # if unsuccessful, don't crawl
 
 	if (r.code == 200): # if successful, crawl it
 
@@ -73,23 +75,23 @@ def visit_URL(URLs_to_visit, visited_URLs, URL_count, max_URLs):
 
 		#print "to visit: ", len(URLs_to_visit), " visited: ", len(visited_URLs)
 
-		if (len(URLs_to_visit) + len(visited_URLs)) < max_URLs: 
+		#if (len(URLs_to_visit) + len(visited_URLs)) < max_URLs: 
 		# the queue is too short, need to find more URLs to search
 
-			#r = urllib2.urlopen(url).read()
-			soup = BeautifulSoup(r, "html.parser")
+		#r = urllib2.urlopen(url).read()
+		soup = BeautifulSoup(r, "html.parser")
 
-			for link in soup.find_all('a'):
-				next_url = link.get('href')
-				if next_url is not None:
-					if next_url.startswith('/') or "eecs.umich.edu" in next_url:
-						# either a relative path or in the eecs.umich.edu domain
-						next_url = normalize_URL(next_url, url)
-						
-						if html_format(next_url):
-							if str(next_url) not in visited_URLs:
-								if str(next_url) not in URLs_to_visit:
-									URLs_to_visit.append(next_url) # add URL to queue
+		for link in soup.find_all('a'):
+			next_url = link.get('href')
+			if next_url is not None:
+				if next_url.startswith('/') or "eecs.umich.edu" in next_url:
+					# either a relative path or in the eecs.umich.edu domain
+					next_url = normalize_URL(next_url, url)
+					
+					if html_format(next_url):
+						if str(next_url) not in visited_URLs:
+							if str(next_url) not in URLs_to_visit:
+								URLs_to_visit.append(next_url) # add URL to queue
 
 
 	return URL_count
@@ -130,13 +132,10 @@ def main():
 		URL_count = visit_URL(URLs_to_visit, visited_URLs, URL_count, max_URLs) # visit the URL
 		print URL_count # used to keep track of progress of the running program
 
-	#print visited_URLs
 
 	# *** STEP THREE: ----------------------------------------------------------
 	#Prepare and print output
 	output = ''
-
-	visited_URLs = visited_URLs[:max_URLs]
 
 	for url in visited_URLs:
 		output += url + '\n'
