@@ -9,8 +9,6 @@ import operator
 import math
 
 from bs4 import BeautifulSoup
-from queue import *
-# from sets import *
 import urllib
 
 def update_page_rank(url, URLs, link_pairs, page_rank):

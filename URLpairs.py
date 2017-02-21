@@ -15,7 +15,6 @@ from bs4 import BeautifulSoup
 
 from sets import Set
 
-
 import urllib2
 import urlparse
 
